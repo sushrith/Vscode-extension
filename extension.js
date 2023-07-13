@@ -42,7 +42,6 @@ function activate(context) {
 			  vscode.window.showErrorMessage('An error occurred while making the API call.');
 			  return;
 			}
-			console.log(response);
 			const newContent = apiData;
 			const newFilePath = filePath.replace(/(\.[^/.]+)$/, '_improved$1');
   
@@ -58,11 +57,24 @@ function activate(context) {
 
 			// Create a new TextEditor with the modified content
 			// { content: newContent,language:findLanguage(filePath)}
-			vscode.workspace.openTextDocument(newFilePath).then((document) => {
-			  vscode.window.showTextDocument(document, vscode.ViewColumn.Beside, true).then(() => {
-				
-			  });
-			});
+			const firstFileUri = fileUri;
+			const secondFileUri = Object.assign({}, fileUri);
+			secondFileUri.path = "/"+newFilePath;
+			console.log(firstFileUri);
+			console.log(secondFileUri);
+			vscode.workspace.openTextDocument(filePath).then((firstDocument) => {
+                vscode.workspace.openTextDocument(newFilePath).then((secondDocument) => {
+                //   vscode.window.showTextDocument(firstDocument).then((firstEditor) => {
+                    vscode.window.showTextDocument(secondDocument).then((secondEditor) => {
+                      // Compare the two documents in the diff editor
+                      vscode.commands.executeCommand(
+                        'workbench.files.action.compareFileWith',
+                        firstFileUri
+                      );
+                    });
+                //   });
+                });
+              });
 		  });
 		} else {
 		  vscode.window.showErrorMessage('Please select a file to replace its content.');
