@@ -32,10 +32,12 @@ function activate(context) {
 			console.log(findLanguage(filePath));
 
 		  // Read the file content
-		  const fileContent = fs.readFileSync(filePath, 'utf-8');
+		  const content = fs.readFileSync(filePath, 'utf-8');
   
+		  const requestBody = { prompt, content };
+
 		  // Make an API call to fetch the data
-		  request('http://127.0.0.1:5000/dummy-api', (error, response, apiData) => {
+		  request.post('http://127.0.0.1:5000/dummy-api',{json: requestBody},(error, response, apiData) => {
 			if (error) {
 			  vscode.window.showErrorMessage('An error occurred while making the API call.');
 			  return;
