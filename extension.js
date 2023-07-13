@@ -42,21 +42,23 @@ function activate(context) {
 			}
 			console.log(response);
 			const newContent = apiData;
+			const newFilePath = filePath.replace(/(\.[^/.]+)$/, '_improved$1');
   
+			// Save the modified content to the new file
+			fs.writeFile(newFilePath, newContent, 'utf-8', (err) => {
+			  if (err) {
+				vscode.window.showErrorMessage('An error occurred while saving the file with improved content.');
+				return;
+			  }
+
+			  vscode.window.showInformationMessage(`New file created: ${newFilePath}`);
+			});
+
 			// Create a new TextEditor with the modified content
-			vscode.workspace.openTextDocument({ content: newContent,language:findLanguage(filePath)}).then((document) => {
+			// { content: newContent,language:findLanguage(filePath)}
+			vscode.workspace.openTextDocument(newFilePath).then((document) => {
 			  vscode.window.showTextDocument(document, vscode.ViewColumn.Beside, true).then(() => {
-				const newFilePath = filePath.replace(/(\.[^/.]+)$/, '_improved$1');
-  
-				// Save the modified content to the new file
-				fs.writeFile(newFilePath, newContent, 'utf-8', (err) => {
-				  if (err) {
-					vscode.window.showErrorMessage('An error occurred while saving the file with improved content.');
-					return;
-				  }
-  
-				  vscode.window.showInformationMessage(`New file created: ${newFilePath}`);
-				});
+				
 			  });
 			});
 		  });
