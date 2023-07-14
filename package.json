@@ -1,8 +1,10 @@
 {
-  "name": "autobots-m",
-  "displayName": "autobots-m",
+  "name": "DB-Pilot",
+  "displayName": "DB-Pilot",
+  "publisher": "Sushrith",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.6",
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.80.0"
   },

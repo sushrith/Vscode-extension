@@ -4,18 +4,11 @@ const path = require('path');
 const Diff = require('diff');
 const request = require('request');
 
-function findLanguage(filePath){
-	let extension = path.extname(filePath);
-	console.log(extension);
-	if(extension == '.py'){
-		return "python";
-	}else if(extension == '.js'){
-		return "javascript";
-	}
-}
-
 function activate(context) {
 	let disposable = vscode.commands.registerCommand('autobots-m.generateCodeUsingAI', () => {
+		
+		const spinnerFrames = ['◴', '◷', '◶', '◵']; // Custom spinner animation frames
+    	let currentFrameIndex = 0;
 		//prompt
 		vscode.window.showInputBox({ prompt: 'Enter your prompt',placeHolder: 'Which feature needs to be added?' }).then((prompt) => {
 			if (!prompt) {
@@ -35,22 +28,55 @@ function activate(context) {
 			// console.log(findLanguage(filePath));
 
 		  // Read the file content
-		  const frontend = fs.readFileSync(filePath1, 'utf-8');
-		  const backend = fs.readFileSync(filePath2, 'utf-8');
+		  let frontend = '';
+		  let frontendPath = '';
+		  let backend = '';
+		  let backendPath = '';
+		  
+		  if(filePath1.includes(".py")){
+			backendPath=filePath1
+			backend = fs.readFileSync(backendPath, 'utf-8');
+		  }else if(filePath2.includes(".py")){
+			backendPath=filePath2
+			backend = fs.readFileSync(backendPath, 'utf-8');
+		  }
+		  
+		  if(filePath1.includes(".js")){
+			frontendPath=filePath1
+			frontend = fs.readFileSync(frontendPath, 'utf-8');
+		  }else if(filePath2.includes(".js")){
+			frontendPath=filePath2
+			frontend = fs.readFileSync(frontendPath, 'utf-8');
+		  }
   
 		  const requestBody = { prompt, frontend ,backend };
 			console.log(JSON.stringify(requestBody));
 		  // Make an API call to fetch the data
-		  request.post('http://127.0.0.1:5000/dummy-api',{json: requestBody},(error, response, apiData) => {
+	
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: 'Fetching data from API',
+			width: 1200, // Change the width
+			height: 600, // Change the height
+			cancellable: false
+		  },  (progress) => {
+			  const interval = setInterval(() => {
+				  progress.report({ message: `Updating the changes ${spinnerFrames[currentFrameIndex]}`});
+				  currentFrameIndex = (currentFrameIndex + 1) % spinnerFrames.length;
+				}, 120);
+		request.post('https://dbpilotbackend-dot-hack-team-autobots-m.el.r.appspot.com/process',{json: requestBody},(error, response, apiData) => {
 			if (error) {
 			  vscode.window.showErrorMessage('An error occurred while making the API call.');
 			  return;
 			}
-			const newContent1 = apiData.content1;
-			const newContent2 = apiData.content2;
-
-			const newFilePath1 = filePath1.replace(/(\.[^/.]+)$/, '_improved$1');
-			const newFilePath2 = filePath2.replace(/(\.[^/.]+)$/, '_improved$1');
+			console.log("clear interval");
+			clearInterval(interval); // Stop the spinner animation
+        	progress.report({ message: 'Data fetched successfully!', increment: 100 });
+			const newContent1 = apiData.frontend;
+			const newContent2 = apiData.backend;
+			console.log(apiData);
+			const newFilePath1 = frontendPath.replace(/(\.[^/.]+)$/, '_improved$1');
+			const newFilePath2 = backendPath.replace(/(\.[^/.]+)$/, '_improved$1');
 
   
 			// Save the modified content to the new file
@@ -88,10 +114,13 @@ function activate(context) {
 				console.log(editor.document.fileName);
 			  })
 		  });
+			});	
 		} else {
 		  vscode.window.showErrorMessage('Please select a file to replace its content.');
 		}
 	  });
+	}).catch((e)=>{
+		console.log(e);
 	});
 });
   

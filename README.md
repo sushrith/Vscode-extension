@@ -1,65 +1,34 @@
-# autobots-m README
-
-This is the README for your extension "autobots-m". After writing up a brief description, we recommend including the following sections.
+# DB-Pilot Extension
+* The DB-Pilot extension is a powerful tool designed to assist developers in rewriting their code using artificial intelligence (AI). This extension leverages AI to generate alternative code based on the provided prompt, allowing users to explore different coding styles and approaches.
 
 ## Features
+* **Code Rewriting** : With the DB-Pilot extension, you can rewrite your code based on a prompt using AI. By providing a prompt, the AI generates alternative code that reflects different coding styles or approaches.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* **Comparison of AI-generated output** : The extension also facilitates the comparison of the AI-generated code with the original code. This feature enables you to evaluate and analyze the differences between the two versions, providing insights into the potential improvements or variations.
 
-For example if there is an image subfolder under your extension project workspace:
+## Getting Started
+To use the DB-Pilot extension in Visual Studio Code, follow these steps:
 
-\!\[feature X\]\(images/feature-x.png\)
+* **Install the Extension** : Install the DB-Pilot extension from the Visual Studio Code marketplace. You can do this by searching for "DB-Pilot" in the Extensions view and clicking the "Install" button.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+* **Access the Command Palette** : Open the Command Palette by pressing Ctrl+Shift+P (or Cmd+Shift+P on macOS). This action opens a dropdown menu with various options.
 
-## Requirements
+* **Generate Code using AI**: In the Command Palette, type "Generate code using AI" and select the corresponding option. This command activates the DB-Pilot extension and allows you to proceed with rewriting your code.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+* **Provide a Feature Prompt**: When prompted, enter a feature description or instruction that best reflects the changes you want in your code. Be clear and concise to guide the AI effectively.
 
-## Extension Settings
+* **Select the File to Modify**: After providing the prompt, choose the file you wish to modify. This file will serve as the input for the AI-generated code.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+* **Review the Output**: Once the AI completes generating the alternative code, it will be presented alongside the original code. Review and analyze the differences between the two versions to gain insights into possible improvements or variations.
 
-For example:
+* **Save and Apply Changes**: If you are satisfied with the AI-generated code, save the changes to the modified file. You can then utilize the new code in your project or continue refining it based on your requirements.
 
-This extension contributes the following settings:
+## Contributing
+* Contributions to DB-Pilot are welcome! If you would like to contribute, please follow the guidelines outlined in the CONTRIBUTING.md file of the repository.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## License
+* This extension is released under the MIT License.
 
-## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
 
-## Release Notes
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
