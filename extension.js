@@ -24,57 +24,69 @@ function activate(context) {
 			console.log(prompt);
 
 		// Open the file to replace its content
-	  vscode.window.showOpenDialog({ canSelectMany: false }).then((fileUris) => {
-		if (fileUris && fileUris.length === 1) {
-		  const fileUri = fileUris[0];
-		  const filePath = fileUri.fsPath;
-			console.log(filePath);
-			console.log(findLanguage(filePath));
+	  vscode.window.showOpenDialog({ canSelectMany: true }).then((fileUris) => {
+		if (fileUris && fileUris.length === 2) {
+		  const firstfileUri = fileUris[0];
+		  const secondfileUri = fileUris[1];
+
+		  const filePath1 = firstfileUri.fsPath;
+		  const filePath2 = secondfileUri.fsPath;
+
+			// console.log(findLanguage(filePath));
 
 		  // Read the file content
-		  const content = fs.readFileSync(filePath, 'utf-8');
+		  const frontend = fs.readFileSync(filePath1, 'utf-8');
+		  const backend = fs.readFileSync(filePath2, 'utf-8');
   
-		  const requestBody = { prompt, content };
-
+		  const requestBody = { prompt, frontend ,backend };
+			console.log(JSON.stringify(requestBody));
 		  // Make an API call to fetch the data
 		  request.post('http://127.0.0.1:5000/dummy-api',{json: requestBody},(error, response, apiData) => {
 			if (error) {
 			  vscode.window.showErrorMessage('An error occurred while making the API call.');
 			  return;
 			}
-			const newContent = apiData;
-			const newFilePath = filePath.replace(/(\.[^/.]+)$/, '_improved$1');
+			const newContent1 = apiData.content1;
+			const newContent2 = apiData.content2;
+
+			const newFilePath1 = filePath1.replace(/(\.[^/.]+)$/, '_improved$1');
+			const newFilePath2 = filePath2.replace(/(\.[^/.]+)$/, '_improved$1');
+
   
 			// Save the modified content to the new file
-			fs.writeFile(newFilePath, newContent, 'utf-8', (err) => {
+			fs.writeFile(newFilePath1, newContent1, 'utf-8', (err) => {
 			  if (err) {
 				vscode.window.showErrorMessage('An error occurred while saving the file with improved content.');
 				return;
 			  }
 
-			  vscode.window.showInformationMessage(`New file created: ${newFilePath}`);
+			  vscode.window.showInformationMessage(`New file created: ${newFilePath1}`);
 			});
 
-			// Create a new TextEditor with the modified content
-			// { content: newContent,language:findLanguage(filePath)}
-			const firstFileUri = fileUri;
-			const secondFileUri = Object.assign({}, fileUri);
-			secondFileUri.path = "/"+newFilePath;
-			console.log(firstFileUri);
-			console.log(secondFileUri);
-			vscode.workspace.openTextDocument(filePath).then((firstDocument) => {
-                vscode.workspace.openTextDocument(newFilePath).then((secondDocument) => {
-                //   vscode.window.showTextDocument(firstDocument).then((firstEditor) => {
-                    vscode.window.showTextDocument(secondDocument).then((secondEditor) => {
-                      // Compare the two documents in the diff editor
-                      vscode.commands.executeCommand(
-                        'workbench.files.action.compareFileWith',
-                        firstFileUri
-                      );
-                    });
-                //   });
-                });
-              });
+			fs.writeFile(newFilePath2, newContent2, 'utf-8', (err) => {
+				if (err) {
+				  vscode.window.showErrorMessage('An error occurred while saving the file with improved content.');
+				  return;
+				}
+  
+				vscode.window.showInformationMessage(`New file created: ${newFilePath2}`);
+			  });
+
+			  vscode.window.onDidChangeActiveTextEditor((editor)=>{
+				const fileName=path.basename(editor.document.fileName).split('.')[0];
+				const filePath = editor.document.fileName;
+				const newFilePath = filePath.replace(fileName, fileName+'_improved');
+				console.log(fileName,filePath,newFilePath);
+				if(fs.existsSync(newFilePath)){
+					const firsturi = vscode.Uri.file(filePath);
+					const seconduri = vscode.Uri.file(newFilePath);
+					vscode.commands.executeCommand('selectForCompare', seconduri).then(()=>{
+						vscode.commands.executeCommand('compareFiles', firsturi).then(()=>{
+						});
+					});
+				}
+				console.log(editor.document.fileName);
+			  })
 		  });
 		} else {
 		  vscode.window.showErrorMessage('Please select a file to replace its content.');
